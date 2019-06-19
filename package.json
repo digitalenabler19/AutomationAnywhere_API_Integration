@@ -86,7 +86,7 @@
       "version": "1.8.1"
     },
     "express": "^4.17.0",
-    "express-session": "^1.16.1",
+    "express-session": "^1.16.2",
     "finalhandler": {
       "integrity": "sha512-aAWcW57uxVNrQZqFXjITpW3sIUQmHGG3qSb9mUah9MgMC4NeWhNOlNjXEYq3HjRAvL6arUviZGGJsBg6z0zsWA==",
       "requires": {
@@ -141,6 +141,7 @@
       "resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.0.tgz",
       "version": "1.9.0"
     },
+    "lodash": "^4.17.11",
     "media-typer": {
       "integrity": "sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=",
       "resolved": "https://registry.npmjs.org/media-typer/-/media-typer-0.3.0.tgz",

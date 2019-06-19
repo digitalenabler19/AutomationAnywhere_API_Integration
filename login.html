@@ -5,19 +5,23 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="public/generic.js"></script>
   <script language="javascript">
     function login(data){
+      alert(global.grokPath);
    /* alert("login");
     alert($( "input#loginID" ).val());
     alert($( "input#pwdID" ).val());*/
     var cred={loginID:$( "input#loginID" ).val(), password:$( "input#pwdID" ).val()};
     /*alert(cred);
     alert(JSON.stringify(cred));*/
+    //alert(global.gConfig.local_URL);
     $.ajax({
             type: 'POST',
             data: JSON.stringify(cred),
                 contentType: 'application/json',
-                        url: 'http://localhost:8000/loginToControlRooom',            
+                        //url: 'http://localhost:8000/loginToControlRooom', 
+                        url: global.grokPath+'/loginToControlRooom',            
                         success: function(data) {
                             console.log('success');
                             window.location="/testApi"
@@ -28,20 +32,20 @@
   }
 
 
-function deploy(data){
+/*function deploy(data){
 
     $.ajax({
             type: 'POST',
             data: JSON.stringify({}),
                 contentType: 'application/json',
-                        url: 'http://localhost:8000/deployBot',            
+                        url: 'http://c948a661.ngrok.io/deployBot',            
                         success: function(data) {
                             console.log('success');
                             console.log(data);
                             console.log(JSON.stringify(data));
                         }
                     });
-  }
+  }*/
 
 
 </script>

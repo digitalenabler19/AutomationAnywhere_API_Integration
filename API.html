@@ -5,36 +5,18 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script src="public/generic.js"></script>
   <script language="javascript">
-    function login(data){
-   /* alert("login");
-    alert($( "input#loginID" ).val());
-    alert($( "input#pwdID" ).val());*/
-    var cred={loginID:$( "input#loginID" ).val(), password:$( "input#pwdID" ).val()};
-    /*alert(cred);
-    alert(JSON.stringify(cred));*/
-    $.ajax({
-            type: 'POST',
-            data: JSON.stringify(cred),
-                contentType: 'application/json',
-                        url: 'http://localhost:8000/loginToControlRooom',            
-                        success: function(data) {
-                            console.log('success');
-                            window.location="/testApi"
-                            console.log(data);
-                            console.log(JSON.stringify(data));
-                        }
-                    });
-  }
+   
 
 
 function deploy(data){
-
+//var botPath=$( "input#loginID" ).val();
     $.ajax({
             type: 'POST',
-            data: JSON.stringify({}),
+            data: JSON.stringify({botPath:$( "input#deployPath" ).val(),deployDevice:$( "input#deployDevice" ).val(), delpoyUser:$( "input#deployUser" ).val()}),
                 contentType: 'application/json',
-                        url: 'http://localhost:8000/deployBot',            
+                        url: global.grokPath+'/deployBot',            
                         success: function(data) {
                             console.log('success');
                             console.log(data);
@@ -42,14 +24,32 @@ function deploy(data){
                         }
                     });
   }
+
+function testCallBack(){
+    $.ajax({
+            type: 'GET',
+            data: JSON.stringify({botPath:$( "input#deployPath" ).val(),deployDevice:$( "input#deployDevice" ).val(), delpoyUser:$( "input#deployUser" ).val()}),
+                contentType: 'application/json',
+                        url: global.grokPath+'/countries',            
+                        success: function(data) {
+                            console.log('success');
+                            console.log(data);
+                            console.log(JSON.stringify(data));
+                        }
+                    });
+}
+
 
 
 </script>
 </head>
 <body>
   <div style="margin:100px;">
-  
+   Path of Bot to Deploy:<input type="text" name="deployPath" id="deployPath"/></br></br>
+   Device to Deploy:<input type="text" name="deployDevice" id="deployDevice"/></br></br>
+   User:<input type="text" name="deployUser" id="deployUser"/></br></br>
    <input type="button" value="Deploy" name="Deploy" onClick="deploy()"/><br><br>
+      <input type="button" value="Test callback" name="Test callback" onClick="testCallBack()"/><br><br>
   </div>
 </body>
 </html>

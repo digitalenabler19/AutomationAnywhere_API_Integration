@@ -1,0 +1,18 @@
+
+{
+    "development": {
+        "controlRoom_URL": "http://aablr0195.aaspl-brd.com:81"
+      
+    },
+    "testing": {
+        
+    },
+    "staging": {
+       
+    },
+    "production": {
+        
+    }
+}
+
+ 
