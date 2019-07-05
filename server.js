@@ -8,6 +8,8 @@ const port = 8000;
 const https = require('https');
 const fs = require('fs');
   const session = require('express-session');
+ /* var http = require('http').Server(app);
+var io = require('socket.io')(http);*/
 
 //----------------------------------------------------------
 
@@ -85,13 +87,19 @@ router.get('/testAPI',function(req,res){
 router.get('/claimAI',function(req,res){
   res.sendFile(path.join(__dirname+'/view/Conversational-AI.html'));
 });
+router.get('/socketchat',function(req,res){
+  res.sendFile(path.join(__dirname+'/view/socketchat.html'));
+});
 app.use('/', router);
 app.listen(port, () => {
   console.log('We are live on ' + port);
 });
 
 
-/*https.createServer({
+/*http.listen(port, function(){
+  console.log('listening on *:' + port);
+});
+*//*https.createServer({
     key: fs.readFileSync('./certificates/privateKey-acme.key'),
     cert: fs.readFileSync('./certificates/certificate-acme.crt'),
     passphrase: 'YOUR PASSPHRASE HERE'

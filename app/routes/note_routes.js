@@ -5,6 +5,13 @@ module.exports = function(app, db) {
 	var thisSession;//global variable
 
 
+app.get('/dllExample', (req, res) => {
+
+    console.log("inside DLL Example");
+ 
+   res.send({"status":"Data returned NodeJS"});
+  });
+
 
 app.post('/countries', (req, res) => {
     // You'll create your note here.
