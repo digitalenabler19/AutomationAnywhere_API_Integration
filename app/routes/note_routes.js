@@ -14,44 +14,126 @@ app.get('/dllExample', (req, res) => {
 
 
 app.post('/countries', (req, res) => {
-    // You'll create your note here.
-      //console.log(req.body);
-    //res.send("hello")
+    
     console.log("inside countries");
-   // console.log(req.body);
+
    console.log(req.body.outputVariables.State.string);
    res.send({"countries":"United States"});
   });
 
 
   app.post('/notes', (req, res) => {
-    // You'll create your note here.
-      //console.log(req.body);
-    //res.send("hello")
+  
 
     console.log(req.body);
    res.send(req.body.title);
   });
 
 
+//search OF BOT
+  app.post('/searchBot', (req, res) => {
+    var botDetails={ 
+"filter": 
+{ 
+"operator":"eq", "value":req.body.botName, "field":"fileName" 
+} 
+}
+
+   console.log(botDetails);
+   request(
+   
+    {headers: {
+    
+      'Content-Type': 'application/json',
+      'X-Authorization':thisSession.token
+    },
+  
+    url: global.gConfig.controlRoom_URL+'/v2/repository/file/list',
+    body: JSON.stringify(botDetails),
+    method: 'POST'},
+    function (error, response, body) {
+    
+        if (!error && response.statusCode == 200) {
+          
+           console.log(response.body);
+            res.send({status:response.body});
+      
+        }
+        else if(response.statusCode == 404 )
+          res.send({status:"bot not found"});
+         else if(response.statusCode == 401 )
+          res.send({status:"Token Expired.Login again before deploying the bot"});
+        else  if (body.code=="UM1110" && response.statusCode != 200 )
+          res.send({status:"Deployment Failed"});
+        else
+          console.log(error);
+    }
+    )
+  },function(){
+
+   console.log("after deployment");
+
+    
+  });
+
+
+//search OF device 82936 87232
+  app.post('/searchDevice', (req, res) => {
+    var botDetails={ 
+"filter": 
+{ 
+"operator":"eq", "value":req.body.deviceHostName, "field":"hostName" 
+} 
+}
+
+   console.log(botDetails);
+   request(
+   
+    {headers: {
+    
+      'Content-Type': 'application/json',
+      'X-Authorization':thisSession.token
+    },
+  
+    url: global.gConfig.controlRoom_URL+'/v2/devices/list',
+    body: JSON.stringify(botDetails),
+    method: 'POST'},
+    function (error, response, body) {
+    
+        if (!error && response.statusCode == 200) {
+          
+           console.log(response.body);
+            res.send({status:response.body});
+      
+        }
+        else if(response.statusCode == 404 )
+          res.send({status:"device not found"});
+         else if(response.statusCode == 401 )
+          res.send({status:"Token Expired.Login again before deploying the bot"});
+        else  if (body.code=="UM1110" && response.statusCode != 200 )
+          res.send({status:"Deployment Failed"});
+        else
+          console.log(error);
+    }
+    )
+  },function(){
+
+   console.log("after deployment");
+
+    
+  });
 
 //DEPLOYMENT OF BOT
   app.post('/deployBot', (req, res) => {
-  	
-//app.get("https://aablr0195.aaspl-brd.com:8000/login?username=amy&password=amyspassword",function(){
-  	//console.log("about to deploy bot");
-  	//console.log(thisSession.token);
 
-  	//var botDetails={"taskRelativePath":"My Tasks\\Sample_API.atmx","BotRunners":{"client":"localhost","user":"botrunner"}};
-    //var botDetails={"taskRelativePath":req.body.botPath,"BotRunners":{"client":"localhost","user":"botrunner"}};
-    //var botDetails={"taskRelativePath":req.body.botPath,"BotRunners":{"client":req.body.deployDevice,"user":req.body.delpoyUser}};
-    
-
-var botDetails={
-  "fileId": "9",
+  /*"fileId": "9",
   "deviceIds": [
-    "2"
-  ],
+    "2"]
+
+req.body.deviceHostName*/
+var botDetails={
+  "fileId": req.body.botID,
+  "deviceIds": req.body.deviceIDs,
   "runWithRdp": false,
   "callbackInfo": {
    "url": "http://aablr0195.aaspl-brd.com:8000/countries",

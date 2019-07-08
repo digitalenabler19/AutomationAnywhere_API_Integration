@@ -1,20 +1,35 @@
 <html>
 <head>
   <title>Express HTML</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+ <!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script src="public/generic.js"></script> -->
+  <script src="public/jquery.min.js"></script>
   <script src="public/generic.js"></script>
   <script language="javascript">
    
+$("#botDetails").hide();
+$("#searchMessage").hide();
 
+function enableDeployButton(){
+  if($("input#botID" ).val() !="" && $("input#deviceID" ).val() !="")
+    $("input#deployBot" ).prop('disabled', false);
+  else
+    $("input#deployBot" ).prop('disabled', true);
+}
 
 function deploy(data){
 //var botPath=$( "input#loginID" ).val();
+/* "fileId": req.body.botID,
+  "deviceIds": req.body.deviceIDs,*/
+
+  var deployDetails={"botID": $("input#botID" ).val(),"deviceIDs":[$("input#deviceID" ).val()]}
     $.ajax({
             type: 'POST',
-            data: JSON.stringify({botPath:$( "input#deployPath" ).val(),deployDevice:$( "input#deployDevice" ).val(), delpoyUser:$( "input#deployUser" ).val()}),
+           /* data: JSON.stringify({botPath:$( "input#deployPath" ).val(),deployDevice:$( "input#deployDevice" ).val(), delpoyUser:$( "input#deployUser" ).val()}),*/
+           data:JSON.stringify(deployDetails),
                 contentType: 'application/json',
                         url: global.grokPath+'/deployBot',            
                         success: function(data) {
@@ -24,6 +39,7 @@ function deploy(data){
                         }
                     });
   }
+  
 
 function testCallBack(){
     $.ajax({
@@ -41,15 +57,128 @@ function testCallBack(){
 
 
 
+function searchBot(){
+  //alert($( "input#botName" ).val());
+ 
+   $.ajax({
+            type: 'POST',
+            data: JSON.stringify({botName:$( "input#botName" ).val()}),
+                contentType: 'application/json',
+                        url: global.grokPath+'/searchBot',            
+                        success: function(data) {
+                           /* console.log('success');
+                            console.log(data.status);*/
+                             var toObj=JSON.parse(data.status)
+                             //alert(toObj.list.length)
+                             
+                             $("#srchResultsHeading" ).show();
+                            if(toObj.list.length>0){
+                             /*$("#botDetails").css('visibility','visible');
+                             $("#searchMessage").css('visibility','hidden')*/;
+                             $("#botDetails").show();
+                             $("#searchMessage").hide();
+                            $("input#botID" ).val(toObj.list[0].id);
+                            $("input#botPath" ).val(toObj.list[0].path);
+                          
+                          }
+                          else
+                          {
+                            // $("#searchMessage" ).css('visibility', 'visible');
+                             $("#searchMessage" ).show();
+                             $("#searchMessage" ).html("No bot found");
+                            // $("#botDetails" ).css('visibility','hidden');
+                             $("#botDetails" ).hide()
+                            // $("#botDetails").hide();
+                            $("input#botID" ).val("");
+                            $("input#botPath" ).val("");
+                          }
+                            enableDeployButton();
+                            //console.log(JSON.stringify(data));visibility:hidden;
+                        }
+                    });
+}
+
+function whenNoDeviceFound(){
+  $("#searchMessage" ).show();
+  $("#searchMessage" ).html("No Device found.Try to login as a user with bot runner license.");
+  $("#deviceDetails" ).hide()
+  $("input#deviceID" ).val("");
+  $("input#userName" ).val("");
+  $("input#deviceStatus" ).val("");
+}
+
+function searchDevice(){
+  //alert($( "input#botName" ).val());
+  
+   $.ajax({
+            type: 'POST',
+            data: JSON.stringify({deviceHostName:$( "input#botName" ).val()}),
+                contentType: 'application/json',
+                        url: global.grokPath+'/searchDevice',            
+                        success: function(data) {
+                           /* console.log('success');*/
+                             console.log(data.status);
+                             var toObj=JSON.parse(data.status)
+                             //alert(toObj.list.length)
+                             
+                             $("#srchResultsHeading" ).show();
+                            if(toObj.list.length>0){
+                             /*$("#botDetails").css('visibility','visible');
+                             $("#searchMessage").css('visibility','hidden')*/;
+                             $("#deviceDetails").show();
+                             $("#searchMessage").hide();
+                             var connectedDevice = jQuery.grep(toObj.list, function( device, i ) {
+  return (device.status=="CONNECTED" && device.type=="BOT_RUNNER");
+});
+                              if(connectedDevice.length>0){
+                             console.log(connectedDevice[0].status);
+                            $("input#deviceID" ).val(connectedDevice[0].id);
+                            $("input#userName" ).val(connectedDevice[0].userName);
+                            $("input#deviceStatus" ).val(connectedDevice[0].status);
+                            
+                          }
+                            else{
+                                whenNoDeviceFound();
+                            }
+                          }
+                          else
+                          {
+                            
+                             whenNoDeviceFound();
+                           
+                          }
+                            
+                            //console.log(JSON.stringify(data));visibility:hidden;
+                            enableDeployButton();
+                        }
+                    });
+}
 </script>
 </head>
 <body>
   <div style="margin:100px;">
-   Path of Bot to Deploy:<input type="text" name="deployPath" id="deployPath"/></br></br>
+   Search for Bot/Device(host name):<input type="text" name="botName" id="botName"/>
+  <input type="button" value="Search Bot" name="Search Bot" onClick="searchBot()"/>
+  <input type="button" value="Search Device" name="Search Device" onClick="searchDevice()"/>
+  <input type="button" value="Deploy" name="Deploy" id="deployBot" onClick="deploy()" DISABLED/>
+  <input type="button" value="Test callback" name="Test callback" onClick="testCallBack()"/>
+   <br></br>
+  <div id="srchResultsHeading" style="display:none;font-weight:bold"> Search Results</div>&nbsp;<div id="searchMessage" style="font-weight:bold;display:none"></br></br>
+  </div></br>
+  <div id="botDetails" style="display:none">
+  Bot ID:<input type="text" name="botName" id="botID" readOnly /></br></br>
+  Bot Path:<input type="text" name="botName" id="botPath" readOnly size="100" /></br></br>
+  </div>
+   <div id="deviceDetails" style="display:none">
+  Device ID:<input type="text" name="deviceID" id="deviceID" readOnly /></br></br>
+  Device User:<input type="text" name="userName" id="userName" readOnly size="100" /></br></br>
+  Device Status:<input type="text" name="deviceStatus" id="deviceStatus" readOnly size="100" /></br></br>
+  </div>
+
+  <!--  Path of Bot to Deploy:<input type="text" name="deployPath" id="deployPath"/></br></br>
    Device to Deploy:<input type="text" name="deployDevice" id="deployDevice"/></br></br>
-   User:<input type="text" name="deployUser" id="deployUser"/></br></br>
-   <input type="button" value="Deploy" name="Deploy" onClick="deploy()"/><br><br>
-      <input type="button" value="Test callback" name="Test callback" onClick="testCallBack()"/><br><br>
+   User:<input type="text" name="deployUser" id="deployUser"/></br></br> -->
+   
   </div>
 </body>
 </html>

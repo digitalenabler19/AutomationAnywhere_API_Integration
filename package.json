@@ -141,6 +141,7 @@
       "resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.0.tgz",
       "version": "1.9.0"
     },
+    "jquery": "^3.4.1",
     "lodash": "^4.17.11",
     "media-typer": {
       "integrity": "sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=",
