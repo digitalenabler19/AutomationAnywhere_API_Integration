@@ -4,6 +4,24 @@ module.exports = function(app, db) {
 	app.use(session({secret: 'automationRPA#sample',saveUninitialized: true,resave: true}));
 	var thisSession;//global variable
 
+var Message = require('../models/Message');
+app.get('/messages', (req, res) => {
+  Message.find({},(err, messages)=> {
+    res.send(messages);
+  })
+})
+
+app.post('/messages', (req, res) => {
+  //var dat=JSON.stringify(req.body);
+  console.log('req.body')
+  console.log(req.body)
+  var message = new Message(req.body);
+  message.save((err) =>{
+    if(err)
+      sendStatus(500);
+    res.sendStatus(200);
+  })
+})
 
 app.get('/dllExample', (req, res) => {
 

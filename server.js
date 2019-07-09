@@ -7,7 +7,19 @@ const path = require('path');
 const port = 8000;
 const https = require('https');
 const fs = require('fs');
-  const session = require('express-session');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+const session = require('express-session');
+
+/*var nameSchema = new mongoose.Schema({
+ name: String,
+ message: String
+});
+const User = mongoose.model("UserMod", nameSchema);*/
+
+//var Message = mongoose.model('Message',{ name:String, message : String});
+
+//var Message = { "name" : "String", "message" : "String"}
  /* var http = require('http').Server(app);
 var io = require('socket.io')(http);*/
 
@@ -67,6 +79,8 @@ router.get('/',function(req,res){
   res.sendFile(path.join(__dirname+'/index.html'));
   //__dirname : It will resolve to your project folder.
 });
+
+
 
 router.get('/login',function(req,res){
 	console.log(global.gConfig);

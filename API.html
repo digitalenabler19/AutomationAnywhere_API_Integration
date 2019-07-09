@@ -8,6 +8,7 @@
   <script src="public/generic.js"></script> -->
   <script src="public/jquery.min.js"></script>
   <script src="public/generic.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <script language="javascript">
    
 $("#botDetails").hide();
@@ -153,6 +154,57 @@ function searchDevice(){
                         }
                     });
 }
+
+function sendMessage(message){
+  alert("asd");
+  var message="dasdASDAd"
+   $.post(global.grokPath+'/messages1', message)
+ }
+
+ function addMessages(message){
+   $('#messages').append(`
+      <h4> ${message.name} </h4>
+      <p>  ${message.message} </p>`)
+   }
+   
+function getMessages(){
+  $.get(global.grokPath+'/messages', (data) => {
+    alert('get')
+    alert(data)
+   data.forEach(addMessages);
+   })
+ }
+
+
+$(() => {
+    $("#send").click(()=>{
+       
+       sendMessage({
+          name: $("#name").val(), 
+          message:$("#message").val()});
+        })
+
+
+      
+    });
+
+
+
+
+
+function sendMessage(data){
+  /*alert("send message")
+  alert(message.name+":"+message.message)*/
+  // $.post(global.grokPath+'/messages', JSON.stringify(data));
+     $.ajax({
+            type: 'POST',
+            data: JSON.stringify(data),
+                contentType: 'application/json',
+                        url: global.grokPath+'/messages',            
+                        success: function(data) {
+                         getMessages();
+                        }});
+ }
 </script>
 </head>
 <body>
@@ -180,5 +232,24 @@ function searchDevice(){
    User:<input type="text" name="deployUser" id="deployUser"/></br></br> -->
    
   </div>
+
+
+
+  <div class="container">
+ <br>
+ <div class="jumbotron">
+ <h1 class="display-4">Send Message</h1>
+ <br>
+ <input id = "name" class="form-control" placeholder="Name">
+ <br>
+ <textarea id = "message" class="form-control" placeholder="Your Message Here">
+</textarea>
+ <br>
+ <button id="send" class="btn btn-success" >Send</button>
+ </div>
+ <div id="messages">
+ 
+</div>
+</div>
 </body>
 </html>
