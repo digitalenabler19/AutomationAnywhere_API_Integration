@@ -292,6 +292,7 @@
       "version": "1.1.1"
     },
     "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
     "statuses": {
       "integrity": "sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=",
       "resolved": "https://registry.npmjs.org/statuses/-/statuses-1.5.0.tgz",

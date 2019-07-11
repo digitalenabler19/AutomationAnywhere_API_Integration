@@ -1,7 +1,8 @@
 
 {
     "development": {
-        "controlRoom_URL": "http://aablr0195.aaspl-brd.com:81"
+        "controlRoom_URL": "http://aablr0195.aaspl-brd.com:81",
+        "thirdParty_URL": "http://aablr0195.aaspl-brd.com:8000"
       
     },
     "testing": {

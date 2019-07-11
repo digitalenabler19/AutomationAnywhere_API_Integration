@@ -1,8 +1,11 @@
-module.exports = function(app, db) {
+
+
+module.exports = function(app,io) {
 	var request = require('request');
 	const session = require('express-session');
 	app.use(session({secret: 'automationRPA#sample',saveUninitialized: true,resave: true}));
 	var thisSession;//global variable
+
 
 var Message = require('../models/Message');
 app.get('/messages', (req, res) => {
@@ -10,6 +13,9 @@ app.get('/messages', (req, res) => {
     res.send(messages);
   })
 })
+
+
+
 
 app.post('/messages', (req, res) => {
   //var dat=JSON.stringify(req.body);
@@ -19,6 +25,8 @@ app.post('/messages', (req, res) => {
   message.save((err) =>{
     if(err)
       sendStatus(500);
+    // io.sockets.emit("message", req.body);
+    // io.emit('message', req.body);
     res.sendStatus(200);
   })
 })
@@ -35,10 +43,17 @@ app.post('/countries', (req, res) => {
     
     console.log("inside countries");
 
-   console.log(req.body.outputVariables.State.string);
+   console.log(req.body.outputVariables);
    res.send({"countries":"United States"});
   });
 
+app.post('/srchPolicyDetails', (req, res) => {
+    
+    console.log("srchPolicyDetails");
+
+   console.log(req.body.outputVariables);
+   //res.send({"countries":"United States"});
+  });
 
   app.post('/notes', (req, res) => {
   
@@ -63,7 +78,8 @@ app.post('/countries', (req, res) => {
     {headers: {
     
       'Content-Type': 'application/json',
-      'X-Authorization':thisSession.token
+      //'X-Authorization':thisSession.token
+       'X-Authorization':global.thisSessionToken
     },
   
     url: global.gConfig.controlRoom_URL+'/v2/repository/file/list',
@@ -74,6 +90,9 @@ app.post('/countries', (req, res) => {
         if (!error && response.statusCode == 200) {
           
            console.log(response.body);
+            var toObj=JSON.parse(response.body)
+           global.searchedBotID=toObj.list[0].id;
+           console.log("searchedbotID"+global.searchedBotID);
             res.send({status:response.body});
       
         }
@@ -105,6 +124,7 @@ app.post('/countries', (req, res) => {
 }
 
    console.log(botDetails);
+   console.log( global.gConfig.controlRoom_URL+'/v2/devices/list');
    request(
    
     {headers: {
@@ -121,6 +141,15 @@ app.post('/countries', (req, res) => {
         if (!error && response.statusCode == 200) {
           
            console.log(response.body);
+            var toObj=JSON.parse(response.body)
+
+          
+            var connectedDevice = toObj.list.filter(function(device, i) {
+  return (device.status=="CONNECTED" && device.type=="BOT_RUNNER");
+});
+            if(connectedDevice.length > 0)
+            global.searchedDeviceID= connectedDevice[0].id;
+           console.log("searcheddevice"+global.searchedDeviceID);
             res.send({status:response.body});
       
         }
@@ -149,65 +178,10 @@ app.post('/countries', (req, res) => {
     "2"]
 
 req.body.deviceHostName*/
-var botDetails={
-  "fileId": req.body.botID,
-  "deviceIds": req.body.deviceIDs,
-  "runWithRdp": false,
-  "callbackInfo": {
-   "url": "http://aablr0195.aaspl-brd.com:8000/countries",
-   //"url":"https://httpbin.org/get",
-  /*  "headers": {
-      "X-Authorization":"mnb"
-    }*/
-  },
-   "botVariables": {
-    "Country": {
-      "string": "India"
-    }
-   }
-};
 
-    console.log(botDetails);
-   request(
-   // 'http://aablr0195.aaspl-brd.com:81/v1/authentication',
-   // { json: { Username:req.body.loginID, Password:req.body.password } },
-    {headers: {
-      //'Content-Length': contentLength,
-      'Content-Type': 'application/json',
-      'X-Authorization':thisSession.token
-    },
-   // url: global.gConfig.controlRoom_URL+'/v1/schedule/automations/deploy',
-    url: global.gConfig.controlRoom_URL+'/v2/automations/deploy',
-    body: JSON.stringify(botDetails),
-    method: 'POST'},
-    function (error, response, body) {
-    	//body: Response body
-    	//console.log(response);
-        if (!error && response.statusCode == 200) {
-        	//console.log("inside loop")
-            //console.log(body);
-            res.send({status:"Deployment success"});
-           /* if(body.token)
-             res.send({status:"Login success"});
-           else
-           	res.send({status:"Login Failed"});*/
-        }
-        else if(response.statusCode == 404 )
-        	res.send({status:"Device not found"});
-         else if(response.statusCode == 401 )
-        	res.send({status:"Token Expired.Login again before deploying the bot"});
-        else  if (body.code=="UM1110" && response.statusCode != 200 )
-        	res.send({status:"Deployment Failed"});
-        else
-        	console.log(error);
-    }
-    )
-  },function(){
+var status=require('../lib/controlRoomAPIs').deployBot( req.body.botID,req.body.deviceIDs,{});
+console.log(status);
 
-   console.log("after deployment");
-
- //});//after call back of login
-    
   });
 
 
@@ -240,6 +214,7 @@ var botDetails={
             var parsedBody=JSON.parse(body);
             console.log(parsedBody);
     		thisSession.token = parsedBody.token;
+       global.thisSessionToken=parsedBody.token;
     		console.log(thisSession.token)
             
            /* if(body.token)

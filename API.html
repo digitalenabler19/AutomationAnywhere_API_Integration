@@ -8,9 +8,23 @@
   <script src="public/generic.js"></script> -->
   <script src="public/jquery.min.js"></script>
   <script src="public/generic.js"></script>
-  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-  <script language="javascript">
-   
+ <!--  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script> -->
+<!-- <script src="public/socket.io.js"></script> -->
+<script src="/socket.io/socket.io.js"></script>
+<script language="javascript">
+   // $(function () {
+      var socket = io();
+//var socket = io('http://aablr0195.aaspl-brd.com:8000');
+/*socket.on('connection', function (socket) {
+   console.log(socket);*/
+socket.on('message',function(data){
+  console.log(data);
+  console.log("recd at clientside");
+});
+//});
+  //  })
+
+
 $("#botDetails").hide();
 $("#searchMessage").hide();
 
@@ -155,13 +169,15 @@ function searchDevice(){
                     });
 }
 
-function sendMessage(message){
+function sendMessage1(message){
   alert("asd");
   var message="dasdASDAd"
-   $.post(global.grokPath+'/messages1', message)
+   $.post(global.grokPath+'/messages1', message);
+   
  }
 
  function addMessages(message){
+  console.log("inside add message");
    $('#messages').append(`
       <h4> ${message.name} </h4>
       <p>  ${message.message} </p>`)
@@ -202,8 +218,10 @@ function sendMessage(data){
                 contentType: 'application/json',
                         url: global.grokPath+'/messages',            
                         success: function(data) {
-                         getMessages();
+                         //getMessages();
+
                         }});
+     socket.emit('message', "jhjhfsd");
  }
 </script>
 </head>

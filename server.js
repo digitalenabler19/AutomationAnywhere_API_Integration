@@ -2,13 +2,17 @@ const express        = require('express');
 //const MongoClient    = require('mongodb').MongoClient;
 const bodyParser     = require('body-parser');
 const app            = express();
+//const app            = express.createServer();
 const router = express.Router();
 const path = require('path');
 const port = 8000;
 const https = require('https');
 const fs = require('fs');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+/*var http = require('http').Server(app);
+var io = require('socket.io')(http);*/
+/*var http = require('http').Server(app);
+var io = require('socket.io')(http);*/
+
 const session = require('express-session');
 
 /*var nameSchema = new mongoose.Schema({
@@ -105,11 +109,67 @@ router.get('/socketchat',function(req,res){
   res.sendFile(path.join(__dirname+'/view/socketchat.html'));
 });
 app.use('/', router);
-app.listen(port, () => {
+//var io;
+/*var server    = app.listen(port, () => {
   console.log('We are live on ' + port);
-});
+
+});*/
+//var server    = app.listen(port);
+//var io=require('socket.io').listen(server);
+  //var io = require("socket.io").listen(app);
+// app.listen(3033);
+
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+server.listen(port);
+/*http.listen(port, function(){
+  console.log('listening on *:' + port);
+});*/
 
 
+io.on('connection', function(socket){
+  socket.on('message',function(data){
+  console.log(socket);
+console.log("msg recd");
+console.log(data);
+   io.emit('message', "recd1 message1");
+ socket.emit('message', "recd message");
+ });
+  socket.on('chat message',function(data){
+   io.emit('chat message', data);
+   //-----------------------------------------------------------------------------
+    //SPLIT MESSAGE TO RETRIEVE THE PLACE HOLDER VALUE
+ var inputVariable="No input variable recieved"
+ var valuesFromChatStart=data.split("<");
+ if(valuesFromChatStart.length>1){
+ var valuesFromChatEnd=valuesFromChatStart[1].split(">");
+ console.log(valuesFromChatStart[1]);
+ console.log(valuesFromChatEnd[0]);
+ inputVariable=valuesFromChatEnd[0];
+}
+    var botVariables={"Policyholder_Name": {
+      "string": inputVariable
+    }};
+
+console.log(botVariables);
+   //----------------------------------------------------------------------------
+   //var status=require('./app/lib/controlRoomAPIs').deployBot("9",["2"]);
+   var status=require('./app/lib/controlRoomAPIs').deployBot( global.searchedBotID,[ global.searchedDeviceID],botVariables);
+  
+  
+   console.log(status);
+   io.emit('chat message', status);
+ });
+})
+
+ //app = express.createServer(),
+  
+/*http.listen(port, function(){
+  console.log('listening on *:' + port);
+});*/
+
+//module.exports.io=io;
 /*http.listen(port, function(){
   console.log('listening on *:' + port);
 });
