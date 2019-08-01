@@ -1,6 +1,7 @@
 var request = require('request');
-module.exports.deployBot=function(botID,deviceIDs,botVariableObj){
+module.exports.deployBot=function(botID,deviceIDs,botVariableObj,io){
 	console.log('deployBot');
+	//io.emit('chat message', "about to deploy bot");
 	var botDetails={
  /* "fileId": req.body.botID,
   "deviceIds": req.body.deviceIDs,*/
@@ -47,7 +48,9 @@ module.exports.deployBot=function(botID,deviceIDs,botVariableObj){
         	
             //res.send({status:"Deployment success"});
             return ({status:"Deployment success"}); 
-           
+            //-----------------------------------------------
+        
+  //-----------------------------------------         
         }
         else if(response.statusCode == 404 )
         	 return ({status:"Device not found"});

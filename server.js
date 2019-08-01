@@ -151,15 +151,18 @@ console.log(data);
     var botVariables={"Policyholder_Name": {
       "string": inputVariable
     }};
-
-console.log(botVariables);
+//console.log("inputVariable"+inputVariable);
+//console.log(botVariables);
    //----------------------------------------------------------------------------
    //var status=require('./app/lib/controlRoomAPIs').deployBot("9",["2"]);
-   var status=require('./app/lib/controlRoomAPIs').deployBot( global.searchedBotID,[ global.searchedDeviceID],botVariables);
+
+   if(inputVariable!="No input variable recieved"){
+   var status=require('./app/lib/controlRoomAPIs').deployBot( global.searchedBotID,[ global.searchedDeviceID],botVariables,io);
   
   
    console.log(status);
    io.emit('chat message', status);
+ }
  });
 })
 
@@ -184,3 +187,42 @@ console.log(botVariables);
 //add the router
 //app.use('/', router);
 //app.listen(8001);
+app.post('/srchPolicyDetails', (req, res) => {
+    
+    console.log("srchPolicyDetails");
+
+    console.log(req.body.outputVariables);
+    console.log(req.body.outputVariables.PolicyDetails.list);
+    io.emit('chat message', req.body.outputVariables.PolicyDetails.list[0]);
+     io.emit('chat message', req.body.outputVariables.PolicyDetails.list[1]);
+      io.emit('chat message', req.body.outputVariables.PolicyDetails.list[2]);
+       io.emit('chat message', req.body.outputVariables.PolicyDetails.list[3]);
+        io.emit('chat message', req.body.outputVariables.PolicyDetails.list[4]);
+         io.emit('chat message', req.body.outputVariables.PolicyDetails.list[5]);
+   res.send({"status":"success"});
+   //return true;
+  });
+
+app.get('/filestr', (req, res) => {
+
+	console.log(__dirname);
+
+	 var filePath = path.join(__dirname, 'JT.pdf');
+
+    //var stat = fileSystem.statSync(filePath);
+
+    res.writeHead(200, {
+        //'Content-Type': 'audio/mpeg',
+        //'Content-Length': stat.size
+        /*   "Content-Type": "application/octet-stream",
+          "Content-Disposition": "attachment; filename=ArchitectureOverview.pptx" */
+        "Content-Type": "multipart/form-data;boundary=boundary",
+		"Content-Disposition": "form-data;name=field1"
+    });
+
+   // var readStream = fileSystem.createReadStream(filePath);
+    // We replaced all the event handlers with a simple call to readStream.pipe()
+    //readStream.pipe(res);
+      fs.createReadStream(filePath).pipe(res);
+});
+module.exports.io=io;

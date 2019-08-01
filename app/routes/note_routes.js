@@ -1,6 +1,16 @@
 
 
-module.exports = function(app,io) {
+module.exports = function(app) {
+ //  require('../server').io.emit('chat message', "inside srch plociy details");
+   var server = require('http').Server(app);
+var io = require('socket.io')(server);
+      io.emit('chat message', "asddad12321");
+
+io.on('connection', function(socket){
+  socket.on('chat message',function(data){
+      io.emit('chat message', "asddad");
+    });
+  });
 	var request = require('request');
 	const session = require('express-session');
 	app.use(session({secret: 'automationRPA#sample',saveUninitialized: true,resave: true}));
@@ -35,7 +45,7 @@ app.get('/dllExample', (req, res) => {
 
     console.log("inside DLL Example");
  
-   res.send({"status":"Data returned NodeJS"});
+   res.send({"status":"Demo of webniar for ME and ROW"});
   });
 
 
@@ -47,11 +57,12 @@ app.post('/countries', (req, res) => {
    res.send({"countries":"United States"});
   });
 
-app.post('/srchPolicyDetails', (req, res) => {
+app.post('/srchPolicyDetails-redundant', (req, res) => {
     
     console.log("srchPolicyDetails");
 
-   console.log(req.body.outputVariables);
+   //console.log(req.body.outputVariables);
+    io.emit('chat message', "inside srch plociy details");
    //res.send({"countries":"United States"});
   });
 
